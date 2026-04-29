@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>The Frog Already Knows — PeAIce V4</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=IBM+Plex+Mono:wght@300;400;500&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;1,8..60,300;1,8..60,400&display=swap');
+  :root {
+    --black:     #030C05;
+    --deep:      #071A0D;
+    --surface:   #0C2415;
+    --paper:     #DCF5E8;
+    --green:     #00FF87;
+    --green-dim: #00FF8720;
+    --amber:     #FFB020;
+    --coral:     #FF5A2E;
+    --blue:      #22DDFF;
+    --muted:     #5DB87A;
+    --rule:      #1A4028;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--black); color:var(--paper); font-family:'Source Serif 4',Georgia,serif; font-size:18px; line-height:1.75; }
+  .masthead { background:var(--deep); border-bottom:1px solid var(--rule); padding:18px 48px; display:flex; align-items:center; justify-content:space-between; }
+  .masthead-left { font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:3px; color:var(--green); }
+  .masthead-right { font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:2px; color:var(--amber); opacity:.85; }
+  .hero { max-width:760px; margin:0 auto; padding:72px 48px 64px; border-left:1px solid var(--rule); border-right:1px solid var(--rule); }
+  .kicker { font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:4px; color:var(--green); margin-bottom:28px; display:flex; align-items:center; gap:12px; }
+  .kicker::before { content:''; display:block; width:28px; height:1px; background:var(--green); opacity:.7; }
+  .hero-top { display:grid; grid-template-columns:1fr 240px; gap:40px; align-items:center; margin-bottom:40px; }
+  h1 { font-family:'Playfair Display',Georgia,serif; font-size:clamp(36px,5vw,54px); font-weight:700; line-height:1.1; color:var(--paper); margin-bottom:14px; }
+  h1 em { font-style:italic; color:var(--green); }
+  .subtitle { font-family:'Playfair Display',Georgia,serif; font-size:17px; font-style:italic; color:var(--muted); line-height:1.45; }
+  .frog-figure { display:flex; flex-direction:column; align-items:center; gap:10px; }
+  .frog-caption { font-family:'IBM Plex Mono',monospace; font-size:7.5px; letter-spacing:1.5px; color:var(--green); opacity:.6; text-align:center; }
+  .rule { width:64px; height:1px; background:var(--rule); margin-bottom:48px; }
+  p { color:#B8DFC8; margin-bottom:24px; font-size:18px; line-height:1.8; font-weight:300; }
+  p strong { color:var(--paper); font-weight:400; }
+  .step { margin:60px 0 26px; }
+  .step-num { font-family:'IBM Plex Mono',monospace; font-size:9px; letter-spacing:3px; color:var(--green); opacity:.8; margin-bottom:8px; }
+  .step h2 { font-family:'Playfair Display',Georgia,serif; font-size:28px; font-weight:700; color:var(--paper); line-height:1.2; }
+  .step h2 em { font-style:italic; color:var(--amber); }
+  .pull { border-left:2px solid var(--green); padding:22px 30px; margin:44px 0; background:var(--green-dim); border-radius:0 4px 4px 0; }
+  .pull p { font-family:'Playfair Display',Georgia,serif; font-size:20px; font-style:italic; color:#C8F0DC; margin:0; line-height:1.5; }
+  .asym { display:grid; grid-template-columns:1fr 1fr; gap:2px; margin:38px 0; background:var(--rule); border:1px solid var(--rule); border-radius:4px; overflow:hidden; }
+  .asym-header { grid-column:span 2; background:var(--deep); padding:12px 20px; font-family:'IBM Plex Mono',monospace; font-size:9px; letter-spacing:3px; color:var(--muted); }
+  .asym-cell { background:var(--surface); padding:20px 22px; }
+  .asym-cell.attacker { border-top:2px solid var(--coral); }
+  .asym-cell.defender { border-top:2px solid var(--green); }
+  .asym-label { font-family:'IBM Plex Mono',monospace; font-size:9px; letter-spacing:2px; margin-bottom:10px; opacity:.8; }
+  .asym-cell.attacker .asym-label { color:var(--coral); }
+  .asym-cell.defender .asym-label { color:var(--green); }
+  .asym-cell p { font-size:14px; line-height:1.6; color:var(--muted); margin:0; }
+  .math-reveal { border:1px solid var(--rule); border-radius:4px; padding:40px; margin:52px 0; background:var(--deep); position:relative; }
+  .math-reveal::before { content:'¶4 — FORMALISM ARRIVES'; position:absolute; top:0; left:32px; background:var(--deep); padding:0 12px; font-family:'IBM Plex Mono',monospace; font-size:9px; letter-spacing:3px; color:var(--amber); transform:translateY(-50%); }
+  .math-reveal p { color:var(--muted); font-size:16px; margin-bottom:18px; }
+  .formula { font-family:'IBM Plex Mono',monospace; font-size:20px; color:var(--green); padding:18px 0; letter-spacing:1px; border-top:1px solid var(--rule); border-bottom:1px solid var(--rule); margin:18px 0; }
+  .formula span { color:var(--amber); }
+  .formula-note { font-family:'IBM Plex Mono',monospace; font-size:11px; color:#1A5030; letter-spacing:1px; margin-top:14px !important; }
+  .pnp-block { margin:52px 0; border:1px solid var(--rule); border-radius:4px; overflow:hidden; position:relative; }
+  .pnp-block::before { content:'MATHEMATICAL SQUARE — P/NP × h < 1'; position:absolute; top:0; left:32px; background:var(--black); padding:0 12px; font-family:'IBM Plex Mono',monospace; font-size:9px; letter-spacing:3px; color:var(--amber); transform:translateY(-50%); }
+  .pnp-grid { display:grid; grid-template-columns:1fr 1fr; gap:2px; background:var(--rule); margin-top:16px; }
+  .pnp-cell { background:var(--surface); padding:30px 26px; }
+  .pnp-cell-label { font-family:'IBM Plex Mono',monospace; font-size:8px; letter-spacing:3px; margin-bottom:12px; opacity:.8; }
+  .pnp-cell.attack  { border-top:2px solid var(--coral); }
+  .pnp-cell.defend  { border-top:2px solid var(--green); }
+  .pnp-cell.gap     { border-top:2px solid var(--amber); }
+  .pnp-cell.formal  { border-top:2px solid var(--blue); background:#051820; }
+  .pnp-cell.attack  .pnp-cell-label { color:var(--coral); }
+  .pnp-cell.defend  .pnp-cell-label { color:var(--green); }
+  .pnp-cell.gap     .pnp-cell-label { color:var(--amber); }
+  .pnp-cell.formal  .pnp-cell-label { color:var(--blue); }
+  .pnp-class { font-family:'IBM Plex Mono',monospace; font-size:21px; margin-bottom:13px; }
+  .pnp-cell.attack .pnp-class { color:var(--coral); }
+  .pnp-cell.defend .pnp-class { color:var(--green); }
+  .pnp-cell.gap    .pnp-class { color:var(--amber); }
+  .pnp-cell.formal .pnp-class { color:var(--blue); }
+  .pnp-cell p { font-size:13.5px; color:var(--muted); line-height:1.65; margin:0; }
+  .pnp-formal-stmt { background:var(--deep); border-top:1px solid var(--rule); padding:26px 30px; font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--muted); line-height:1.75; }
+  .pnp-formal-stmt strong { color:var(--green); font-weight:500; }
+  .pnp-formal-stmt em { color:var(--amber); font-style:normal; }
+  .arrival { margin:68px 0 44px; padding:52px 0; border-top:1px solid var(--rule); border-bottom:1px solid var(--rule); text-align:center; }
+  .arrival-pre { font-family:'IBM Plex Mono',monospace; font-size:9px; letter-spacing:4px; color:var(--green); opacity:.7; margin-bottom:22px; }
+  .arrival-text { font-family:'Playfair Display',Georgia,serif; font-size:clamp(22px,3vw,32px); font-style:italic; color:var(--paper); line-height:1.4; max-width:560px; margin:0 auto; }
+  .arrival-text em { color:var(--green); }
+  .canon-tag { display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:9px; letter-spacing:2px; color:var(--green); border:1px solid var(--green); opacity:.7; padding:3px 8px; border-radius:2px; margin-right:8px; vertical-align:middle; }
+  footer { max-width:760px; margin:0 auto; padding:40px 48px 64px; border-left:1px solid var(--rule); border-right:1px solid var(--rule); border-top:1px solid var(--rule); }
+  .footer-grid { display:grid; grid-template-columns:1fr 1fr; gap:32px; margin-bottom:40px; }
+  .footer-block-label { font-family:'IBM Plex Mono',monospace; font-size:9px; letter-spacing:3px; color:var(--muted); opacity:.6; margin-bottom:8px; }
+  .footer-block p { font-family:'IBM Plex Mono',monospace; font-size:11px; color:#2A5A3A; line-height:1.7; margin:0; }
+  .footer-bottom { font-family:'IBM Plex Mono',monospace; font-size:9px; color:#1A4028; letter-spacing:2px; padding-top:24px; border-top:1px solid var(--rule); display:flex; justify-content:space-between; }
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <div class="masthead-left">PEAICE RESEARCH PROGRAM · LOVE LABS</div>
+  <div class="masthead-right">V4 COHERENCE UPDATE · BIOLOGY × P/NP × h &lt; 1</div>
+</div>
+
+<div class="hero">
+  <div class="kicker">GROUND-FLOOR ARTIFACT · V4 COHERENCE UPDATE</div>
+
+  <div class="hero-top">
+    <div>
+      <h1>The Frog Already<br/><em>Knows</em></h1>
+      <div class="subtitle">What a poison dart parent teaches us about<br/>governance, humility, and the limits of protection.</div>
+    </div>
+
+    <div class="frog-figure">
+      <svg width="210" height="215" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
+        <!-- ambient glow -->
+        <circle cx="110" cy="118" r="88" fill="#00FF87" opacity="0.04"/>
+        <!-- BODY -->
+        <ellipse cx="110" cy="126" rx="52" ry="44" fill="#1A9FFF"/>
+        <ellipse cx="100" cy="110" rx="22" ry="13" fill="#55CCFF" opacity="0.55"/>
+        <!-- BODY SPOTS -->
+        <ellipse cx="88"  cy="122" rx="12" ry="10" fill="#040B06" opacity="0.88"/>
+        <ellipse cx="132" cy="122" rx="12" ry="10" fill="#040B06" opacity="0.88"/>
+        <ellipse cx="110" cy="142" rx="10" ry="8"  fill="#040B06" opacity="0.82"/>
+        <ellipse cx="94"  cy="150" rx="7"  ry="5"  fill="#040B06" opacity="0.7"/>
+        <ellipse cx="126" cy="150" rx="7"  ry="5"  fill="#040B06" opacity="0.7"/>
+        <!-- HEAD -->
+        <ellipse cx="110" cy="88" rx="40" ry="30" fill="#1A9FFF"/>
+        <ellipse cx="98"  cy="80" rx="15" ry="9"  fill="#55CCFF" opacity="0.5"/>
+        <ellipse cx="110" cy="97" rx="38" ry="9"  fill="#040B06" opacity="0.45"/>
+        <!-- EYES -->
+        <circle cx="84"  cy="78" r="14" fill="#040B06"/>
+        <circle cx="84"  cy="78" r="10" fill="#FFB020"/>
+        <circle cx="84"  cy="78" r="6"  fill="#040B06"/>
+        <circle cx="81"  cy="75" r="2.5" fill="white" opacity="0.9"/>
+        <circle cx="136" cy="78" r="14" fill="#040B06"/>
+        <circle cx="136" cy="78" r="10" fill="#FFB020"/>
+        <circle cx="136" cy="78" r="6"  fill="#040B06"/>
+        <circle cx="133" cy="75" r="2.5" fill="white" opacity="0.9"/>
+        <!-- NOSE -->
+        <circle cx="103" cy="93" r="2.8" fill="#040B06" opacity="0.7"/>
+        <circle cx="117" cy="93" r="2.8" fill="#040B06" opacity="0.7"/>
+        <!-- MOUTH -->
+        <path d="M 96 101 Q 110 110 124 101" stroke="#040B06" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <!-- FRONT LEGS -->
+        <path d="M 68 130 Q 50 140 42 150" stroke="#1A9FFF" stroke-width="11" fill="none" stroke-linecap="round"/>
+        <path d="M 42 150 Q 36 160 30 154" stroke="#1A9FFF" stroke-width="7" fill="none" stroke-linecap="round"/>
+        <path d="M 42 150 Q 38 162 34 160" stroke="#1A9FFF" stroke-width="6" fill="none" stroke-linecap="round"/>
+        <path d="M 42 150 Q 46 163 42 164" stroke="#1A9FFF" stroke-width="6" fill="none" stroke-linecap="round"/>
+        <path d="M 152 130 Q 170 140 178 150" stroke="#1A9FFF" stroke-width="11" fill="none" stroke-linecap="round"/>
+        <path d="M 178 150 Q 184 160 190 154" stroke="#1A9FFF" stroke-width="7" fill="none" stroke-linecap="round"/>
+        <path d="M 178 150 Q 182 162 186 160" stroke="#1A9FFF" stroke-width="6" fill="none" stroke-linecap="round"/>
+        <path d="M 178 150 Q 174 163 178 164" stroke="#1A9FFF" stroke-width="6" fill="none" stroke-linecap="round"/>
+        <!-- BACK LEGS -->
+        <path d="M 74 160 Q 52 175 40 192" stroke="#1A9FFF" stroke-width="14" fill="none" stroke-linecap="round"/>
+        <path d="M 40 192 Q 28 204 20 198" stroke="#1A9FFF" stroke-width="8" fill="none" stroke-linecap="round"/>
+        <path d="M 40 192 Q 32 206 26 208" stroke="#1A9FFF" stroke-width="7" fill="none" stroke-linecap="round"/>
+        <path d="M 40 192 Q 42 208 36 212" stroke="#1A9FFF" stroke-width="7" fill="none" stroke-linecap="round"/>
+        <path d="M 40 192 Q 50 206 48 210" stroke="#1A9FFF" stroke-width="7" fill="none" stroke-linecap="round"/>
+        <path d="M 146 160 Q 168 175 180 192" stroke="#1A9FFF" stroke-width="14" fill="none" stroke-linecap="round"/>
+        <path d="M 180 192 Q 192 204 200 198" stroke="#1A9FFF" stroke-width="8" fill="none" stroke-linecap="round"/>
+        <path d="M 180 192 Q 188 206 194 208" stroke="#1A9FFF" stroke-width="7" fill="none" stroke-linecap="round"/>
+        <path d="M 180 192 Q 178 208 184 212" stroke="#1A9FFF" stroke-width="7" fill="none" stroke-linecap="round"/>
+        <path d="M 180 192 Q 170 206 172 210" stroke="#1A9FFF" stroke-width="7" fill="none" stroke-linecap="round"/>
+        <!-- leg spots -->
+        <ellipse cx="55" cy="170" rx="6" ry="5" fill="#040B06" opacity="0.7" transform="rotate(-30 55 170)"/>
+        <ellipse cx="165" cy="170" rx="6" ry="5" fill="#040B06" opacity="0.7" transform="rotate(30 165 170)"/>
+        <!-- tadpole icon -->
+        <ellipse cx="190" cy="55" rx="7" ry="5" fill="#00FF87" opacity="0.5"/>
+        <path d="M 197 55 Q 208 50 212 44" stroke="#00FF87" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.5"/>
+        <!-- h<1 label -->
+        <text x="83" y="212" font-family="IBM Plex Mono,monospace" font-size="12" fill="#00FF87" opacity="0.85" letter-spacing="1">h &lt; 1</text>
+      </svg>
+      <div class="frog-caption">DENDROBATIDAE · POISON DART FROG<br/>Dendrobates azureus · pre-formal h &lt; 1</div>
+    </div>
+  </div>
+
+  <div class="rule"></div>
+
+  <div class="step">
+    <div class="step-num">STEP 01 — NON-SOVEREIGNTY</div>
+    <h2>The alkaloids are not<br/><em>its own</em></h2>
+  </div>
+
+  <p>The poison dart frog does not manufacture its toxin. It <strong>sequesters it</strong> — gathering alkaloids from the mites and beetles it eats, concentrating them through its skin over weeks and months. Remove the diet, lose the defense. The frog's protective capacity depends entirely on inputs it does not control.</p>
+
+  <p>This is not a flaw. It is the frog's <strong>first and most important piece of knowledge about itself</strong>: I am not the source of my own armor. My protection is bounded before I begin.</p>
+
+  <div class="pull">
+    <p>"The frog's lethality is borrowed. Its parenting proceeds from that fact — not despite it."</p>
+  </div>
+
+  <div class="step">
+    <div class="step-num">STEP 02 — THE ASYMMETRY</div>
+    <h2>One gap is enough.<br/><em>Every gap must be closed.</em></h2>
+  </div>
+
+  <p>A predator — snake, spider, bird — needs to find one unguarded pool. One moment of absence. One tadpole left without a transport run. The cost of attacking is low, targeted, and cheap.</p>
+
+  <p>The parent must guard <strong>every pool, on schedule, indefinitely</strong>. It transports tadpoles one at a time to separate pools — sometimes carrying them on its back through the canopy — because consolidation creates a single point of catastrophic failure. The cost of defending is structural, distributed, and permanent.</p>
+
+  <div class="asym">
+    <div class="asym-header">STRUCTURAL ASYMMETRY — ATTACKER vs DEFENDER</div>
+    <div class="asym-cell attacker">
+      <div class="asym-label">ATTACKER (PREDATOR)</div>
+      <p>Probe any single pool.<br/>Find one lapse in the schedule.<br/>Cost: one attempt, low effort.<br/>Verification required: local only.</p>
+    </div>
+    <div class="asym-cell defender">
+      <div class="asym-label">DEFENDER (PARENT)</div>
+      <p>Guard all pools simultaneously.<br/>Maintain schedule without exception.<br/>Cost: total, sustained, distributed.<br/>Verification required: global, always.</p>
+    </div>
+  </div>
+
+  <p>The frog cannot solve this asymmetry. <strong>No frog can.</strong> It can only acknowledge it and build a protocol around the acknowledgment.</p>
+
+  <div class="step">
+    <div class="step-num">STEP 03 — THE PROTOCOL</div>
+    <h2>It does not attempt<br/><em>omniscience</em></h2>
+  </div>
+
+  <p>Watch what the frog actually does: it selects <strong>specific pools</strong> — not random ones, not all of them at once. It maintains <strong>scheduled return trips</strong>. When resources are scarce, it allocates unfertilized eggs as tadpole feed — triage by design, not by failure.</p>
+
+  <p>None of this closes the asymmetry. The frog knows it cannot close the asymmetry. What it does instead is <strong>bound the exposure</strong>: limit the blast radius of any single lapse, maintain rhythmic presence, accept that absolute safety is not a reachable state.</p>
+
+  <p>This is not resignation. This is <strong>governance</strong>. The protocol emerges precisely because omniscience is off the table. The constraint produces the structure.</p>
+
+  <div class="pull">
+    <p>"A system that admits it cannot see everything builds better eyes than one that claims to see all."</p>
+  </div>
+
+  <div class="math-reveal">
+    <p>Now we can name what the frog has been doing all along.</p>
+    <p>In the PeAIce L²_C governance framework, the term <strong>h</strong> represents the evaluator's structural non-sovereignty — the formal acknowledgment that no verifier can achieve total coverage of the state space it is responsible for protecting. It is bounded above: <strong>h &lt; 1</strong>, always. Not as a penalty. As a fact.</p>
+    <div class="formula">h = H(<span>E_¬sovereign</span>) &lt; 1</div>
+    <p>The exponential state space cannot be fully verified. Per-branch checks are tractable. Global coherence across all possible states is not — it sits in NP-complete territory, structurally equivalent to exhaustive path enumeration in a traveling salesman problem on a map with no fixed size.</p>
+    <p>Attackers probe locally. Defenders must hold globally. The asymmetry is not a bug in the system. It is the ground condition under which all honest governance must operate.</p>
+    <p class="formula-note">h grounds in evaluator non-sovereignty. NOT in Gödel's incompleteness theorems. [FLAG-001 CANON]</p>
+  </div>
+
+  <div class="pnp-block">
+    <div class="pnp-grid">
+      <div class="pnp-cell attack">
+        <div class="pnp-cell-label">ATTACK VERIFICATION</div>
+        <div class="pnp-class">∈ P</div>
+        <p>Check one branch. Polynomial time. Probe a single pool, a single lapse. Cost is cheap and local. The attacker does not need to solve the full problem — only to find one opening.</p>
+      </div>
+      <div class="pnp-cell defend">
+        <div class="pnp-cell-label">DEFEND VERIFICATION</div>
+        <div class="pnp-class">∈ NP-complete</div>
+        <p>Check all branches. Exponential state space. Guard every pool, on every schedule, without exception. Global coherence across all possible adversarial paths. The defender must hold everywhere, always.</p>
+      </div>
+      <div class="pnp-cell gap">
+        <div class="pnp-cell-label">THE GAP</div>
+        <div class="pnp-class">NP \ P</div>
+        <p>Assuming P ≠ NP — the gap is structural and irreducible. It cannot be engineered away. No amount of compute closes it. The asymmetry is not a temporary condition awaiting better tooling. It is a complexity-class fact.</p>
+      </div>
+      <div class="pnp-cell formal">
+        <div class="pnp-cell-label">h &lt; 1</div>
+        <div class="pnp-class">∀ evaluators</div>
+        <p>The formal name for operating inside that gap. Always. h &lt; 1 holds because full evaluator verification ∈ NP \ P. Sovereignty would require collapsing NP into P. P ≠ NP means h &lt; 1 is permanent — not provisional.</p>
+      </div>
+    </div>
+    <div class="pnp-formal-stmt">
+      <strong>Formal statement:</strong> h &lt; 1 holds because full evaluator verification ∈ NP \ P.<br/>
+      The evaluator is non-sovereign not by design failure —<br/>
+      but because sovereignty would require collapsing NP into P.<br/>
+      <em>P ≠ NP means h &lt; 1 is permanent.</em><br/><br/>
+      <strong>Biological ground:</strong> The frog's triage protocol is a P-class heuristic running inside an NP-hard environment. It does not solve the NP problem. It acknowledges it — and governs accordingly. That is h &lt; 1 operationalized by a fifty-million-year-old organism with no theorem.
+    </div>
+  </div>
+
+  <div class="arrival">
+    <div class="arrival-pre">ARRIVAL LINE</div>
+    <div class="arrival-text">
+      <em>h &lt; 1</em> is the formal name for what<br/>the frog already practices.
+    </div>
+  </div>
+
+  <p>The frog does not need the theorem to parent well. But the theorem needs the frog to mean anything at all. Without the biology — without the sequestered toxin, the asymmetric cost, the triage protocol — h &lt; 1 is a symbol inside a formula. With it, h &lt; 1 is a description of something real that has been happening in the rainforest for fifty million years.</p>
+
+  <p>The framework does not teach the frog anything. <strong>The frog grounds the framework.</strong></p>
+
+  <p>That is the crossing.</p>
+</div>
+
+<footer>
+  <div class="footer-grid">
+    <div class="footer-block">
+      <div class="footer-block-label">CANONICAL FEEDSTOCK</div>
+      <p>
+        <span class="canon-tag">[CANON]</span>Poison Dart Parents paper<br/>
+        <span class="canon-tag">[CANON]</span>FLAG-001 Condensing event<br/>
+        <span class="canon-tag">[CANON]</span>L²_C v3.0 math paper<br/>
+        <span class="canon-tag">[V4 CU]</span>P/NP Mathematical Square
+      </p>
+    </div>
+    <div class="footer-block">
+      <div class="footer-block-label">h &lt; 1 — THREE-PILLAR GROUNDING</div>
+      <p>
+        1. Evaluator non-sovereignty [FLAG-001]<br/>
+        2. Biological instantiation [Dendrobatidae]<br/>
+        3. P/NP complexity asymmetry [V4 CU]<br/>
+        Excellence = L² × β × C × P
+      </p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>PeAIce Research Program · peaice.org · Love Labs</span>
+    <span>PeAIce Thinking Machine: Claude V4 · Coherence Update</span>
+  </div>
+</footer>
+
+</body>
+</html>
